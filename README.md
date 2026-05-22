@@ -81,7 +81,7 @@ cargo test: to run the tests
 
 With cargo run: opens a window and to test it:
 
-left mouse click - working
+left mouse click - working /
 escape to close the window
 
 ** DON'T BOTHER WITH THIS WARNING:
