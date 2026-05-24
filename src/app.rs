@@ -20,6 +20,7 @@ pub struct AppState {
     pub step_frame_counter: u32,
     pub left_was_down: bool,
     pub enter_was_down: bool,
+    pub clear_was_down: bool,
     pub message: Option<StatusMessage>,
     pub dragging_index: Option<usize>,
 }
@@ -35,6 +36,7 @@ impl AppState {
             step_frame_counter: 0,
             left_was_down: false,
             enter_was_down: false,
+            clear_was_down: false,
             message: None,
             dragging_index: None,
         }
@@ -107,6 +109,16 @@ impl AppState {
             }
         }
     }
+    pub fn handle_clear(&mut self) {
+        self.control_points.clear();
+        self.frames.clear();
+        self.stop_animation();
+        self.message = None;
+        self.show_result = false;
+        self.current_step = 0;
+        self.step_frame_counter = 0;
+        self.dragging_index = None;
+    }
 }
 
 #[cfg(test)]
@@ -141,6 +153,27 @@ mod tests {
         assert!(app.frames.is_empty());
         assert_eq!(app.current_step, 0);
         assert_eq!(app.step_frame_counter, 0);
+    }
+
+    #[test]
+    fn test_clear_resets_all_state() {
+        let mut app = AppState::new();
+        // 1. dirty the state (add points, start animation, set a message...)
+        app.control_points.push(Point { x: 1.0, y: 2.0 });
+        app.animating = true;
+        app.frames.push(vec![Point { x: 3.0, y: 4.0 }]);
+        app.current_step = 1;
+        app.step_frame_counter = 5;
+        app.message = Some(StatusMessage { text: NO_POINTS_MESSAGE });
+        // 2. call app.clear()
+        app.handle_clear();
+        // 3. assert everything is back to default
+        assert!(app.control_points.is_empty());
+        assert!(app.frames.is_empty());
+        assert!(!app.animating);
+        assert_eq!(app.current_step, 0);
+        assert_eq!(app.step_frame_counter, 0);
+        assert_eq!(app.message, None);
     }
 
     #[test]
