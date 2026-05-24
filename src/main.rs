@@ -57,7 +57,7 @@ fn render(buffer: &mut [u32], state: &AppState) {
         );
     }
 
-    if state.animating && active_points.len() >= 2 {
+    if (state.animating || state.show_result) && active_points.len() >= 2 {
         draw_polyline(buffer, active_points, LINE_COLOR);
     }
 

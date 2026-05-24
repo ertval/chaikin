@@ -15,6 +15,7 @@ pub struct AppState {
     pub control_points: Vec<Point>,
     pub frames: Vec<Vec<Point>>,
     pub animating: bool,
+    pub show_result: bool,
     pub current_step: usize,
     pub step_frame_counter: u32,
     pub left_was_down: bool,
@@ -29,6 +30,7 @@ impl AppState {
             control_points: Vec::new(),
             frames: Vec::new(),
             animating: false,
+            show_result: false,
             current_step: 0,
             step_frame_counter: 0,
             left_was_down: false,
@@ -72,6 +74,7 @@ impl AppState {
 
     pub fn add_control_point(&mut self, point: Point) {
         self.message = None;
+        self.show_result = false;
         self.stop_animation();
         self.control_points.push(point);
     }
@@ -82,13 +85,21 @@ impl AppState {
                 self.message = Some(StatusMessage {
                     text: NO_POINTS_MESSAGE,
                 });
+                self.show_result = false;
             }
-            1 | 2 => {
+            1 => {
                 self.message = None;
+                self.show_result = false;
+                self.stop_animation();
+            }
+            2 => {
+                self.message = None;
+                self.show_result = true;
                 self.stop_animation();
             }
             _ => {
                 self.message = None;
+                self.show_result = false;
                 self.frames = build_frames(&self.control_points, ANIMATION_STEPS);
                 self.animating = !self.frames.is_empty();
                 self.current_step = 0;
