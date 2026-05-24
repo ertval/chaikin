@@ -46,10 +46,12 @@ fn poll_input(window: &Window, state: &mut AppState) {
     }
 
     let enter_down = window.is_key_down(Key::Enter);
-    if enter_down && !state.enter_was_down {
+    let right_down = window.get_mouse_down(MouseButton::Right);
+    if (enter_down && !state.enter_was_down) || (right_down && !state.right_was_down) {
         state.handle_enter();
-    } 
+    }
     state.enter_was_down = enter_down;
+    state.right_was_down = right_down;
     let clear_down = window.is_key_down(Key::C);
     if clear_down && !state.clear_was_down {
         state.handle_clear();

@@ -2,11 +2,11 @@ use crate::chaikin::Point;
 
 pub const WIDTH: usize = 800;
 pub const HEIGHT: usize = 600;
-pub const POINT_RADIUS: i32 = 6;
+pub const POINT_RADIUS: i32 = 5;
 
 pub const BG_COLOR: u32 = 0xFF_1E_1E_2E;
-pub const POINT_COLOR: u32 = 0xFF_F9_E2_AF;
-pub const LINE_COLOR: u32 = 0xFF_CBA_6F7;
+pub const POINT_COLOR: u32 = 0xFF_F3_8B_A8; // Stylish, premium Red (Catppuccin Mocha Red)
+pub const LINE_COLOR: u32 = 0xFF_A6_E3_A1; // Stylish, premium Green (Catppuccin Mocha Green)
 
 pub const INITIAL_WINDOW_X: isize = 100;
 pub const INITIAL_WINDOW_Y: isize = 100;

@@ -20,6 +20,7 @@ pub struct AppState {
     pub step_frame_counter: u32,
     pub left_was_down: bool,
     pub enter_was_down: bool,
+    pub right_was_down: bool,
     pub clear_was_down: bool,
     pub message: Option<StatusMessage>,
     pub dragging_index: Option<usize>,
@@ -36,6 +37,7 @@ impl AppState {
             step_frame_counter: 0,
             left_was_down: false,
             enter_was_down: false,
+            right_was_down: false,
             clear_was_down: false,
             message: None,
             dragging_index: None,
@@ -129,6 +131,7 @@ impl AppState {
         self.show_result = false;
         self.current_step = 0;
         self.step_frame_counter = 0;
+        self.right_was_down = false;
         self.dragging_index = None;
     }
 }
@@ -147,6 +150,7 @@ mod tests {
         assert_eq!(app.step_frame_counter, 0);
         assert!(!app.left_was_down);
         assert!(!app.enter_was_down);
+        assert!(!app.right_was_down);
         assert_eq!(app.message, None);
         assert_eq!(app.dragging_index, None);
     }

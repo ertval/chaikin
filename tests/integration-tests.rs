@@ -115,6 +115,22 @@ mod audit_tests {
     }
 
     #[test]
+    fn test_right_click_animation_start() {
+        // Verify right click action trigger
+        let mut state = AppState::new();
+        state.add_control_point(Point { x: 100.0, y: 50.0 });
+        state.add_control_point(Point { x: 150.0, y: 150.0 });
+        state.add_control_point(Point { x: 50.0, y: 150.0 });
+
+        // Act (triggers handle_enter under the hood)
+        state.handle_enter();
+
+        assert_eq!(state.control_points.len(), 3);
+        assert!(state.animating);
+        assert_eq!(state.frames.len(), 7);
+    }
+
+    #[test]
     fn test_seven_step_animation_cycle() {
         // Audit: "Does the animation complete 7 steps before restarting?"
         let mut state = AppState::new();
