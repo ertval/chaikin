@@ -38,8 +38,8 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 - [x] Read the left button with `window.get_mouse_down(MouseButton::Left)`.
 - [x] Only add a point on the rising edge: `left_down && !left_was_down`.
 - [x] Convert the mouse position into `Point { x: x as f64, y: y as f64 }`.
-- [ ] Decide and implement a single rule: ignore clicks while animating (simplest, avoids surprises).
-- [ ] When adding a new point, stop any animation (`animating = false`, `frames.clear()`, `current_step = 0`).
+- [x] Decide and implement a single rule: ignore clicks while animating (simplest, avoids surprises).
+- [x] When adding a new point, stop any animation (`animating = false`, `frames.clear()`, `current_step = 0`).
 - [x] Keep left-click behavior stable so the user can place many points without repeats from a held button.
 
 ## 4. Enter key behavior

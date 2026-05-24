@@ -39,6 +39,18 @@ impl AppState {
     pub fn update(&mut self) {
         // Placeholder for event updates and animation logic
     }
+
+    pub fn stop_animation(&mut self) {
+        self.animating = false;
+        self.frames.clear();
+        self.current_step = 0;
+        self.step_frame_counter = 0;
+    }
+
+    pub fn add_control_point(&mut self, point: Point) {
+        self.stop_animation();
+        self.control_points.push(point);
+    }
 }
 
 #[cfg(test)]
@@ -57,6 +69,38 @@ mod tests {
         assert!(!app.enter_was_down);
         assert_eq!(app.message, None);
         assert_eq!(app.dragging_index, None);
+    }
+
+    #[test]
+    fn test_stop_animation() {
+        let mut app = AppState::new();
+        app.animating = true;
+        app.frames.push(vec![Point { x: 1.0, y: 2.0 }]);
+        app.current_step = 3;
+        app.step_frame_counter = 10;
+
+        app.stop_animation();
+
+        assert!(!app.animating);
+        assert!(app.frames.is_empty());
+        assert_eq!(app.current_step, 0);
+        assert_eq!(app.step_frame_counter, 0);
+    }
+
+    #[test]
+    fn test_add_control_point_stops_animation() {
+        let mut app = AppState::new();
+        app.animating = true;
+        app.frames.push(vec![]);
+        app.current_step = 2;
+
+        app.add_control_point(Point { x: 5.0, y: 6.0 });
+
+        assert!(!app.animating);
+        assert!(app.frames.is_empty());
+        assert_eq!(app.current_step, 0);
+        assert_eq!(app.control_points.len(), 1);
+        assert_eq!(app.control_points[0], Point { x: 5.0, y: 6.0 });
     }
 
     #[test]

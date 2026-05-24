@@ -9,8 +9,8 @@ use minifb::{Key, MouseButton, MouseMode, Window, WindowOptions};
 fn poll_input(window: &Window, state: &mut AppState) {
     if let Some((x, y)) = window.get_mouse_pos(MouseMode::Clamp) {
         let left_down = window.get_mouse_down(MouseButton::Left);
-        if left_down && !state.left_was_down {
-            state.control_points.push(Point {
+        if left_down && !state.left_was_down && !state.animating {
+            state.add_control_point(Point {
                 x: x as f64,
                 y: y as f64,
             });
