@@ -82,7 +82,7 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 
 - [x] Bind Escape to close the window immediately.
 - [x] Use the native window close button (system title bar).
-- [ ] Confirm the app exits cleanly while idle and while animating.
+- [x] Confirm the app exits cleanly while idle and while animating.
 - [x] Keep shutdown path free of panics so the window can close without errors.
 
 ## 8. Bonus features
@@ -103,6 +103,7 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 - [ ] With 3 or more points, pressing Enter starts the Chaikin animation.
 - [ ] The animation completes 7 steps and then restarts.
 - [x] Pressing Escape exits without errors.
+- [x] Closing the window while animating exits without errors.
 - [ ] With 1 point, pressing Enter shows only the point and nothing changes.
 - [ ] With 2 points, pressing Enter shows only a straight line.
 - [ ] Pressing Enter with no points does nothing.
@@ -118,7 +119,7 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 - [ ] Add static rendering: clear background, draw points, draw line/polyline.
 - [ ] Add `build_frames` and animation timing with `STEP_FRAMES`.
 - [ ] Handle the 0/1/2-point Enter cases explicitly.
-- [ ] Verify Escape exit behavior.
+- [x] Verify Escape exit behavior.
 - [ ] Add optional no-points message if desired.
 - [ ] Add clear key bonus and then dragging bonus.
 - [ ] Finish with the manual audit checklist.

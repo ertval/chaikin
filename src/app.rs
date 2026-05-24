@@ -57,6 +57,19 @@ impl AppState {
         self.step_frame_counter = 0;
     }
 
+    pub fn active_points(&self) -> &[Point] {
+        if self.animating {
+            if let Some(frame) = self.frames.get(self.current_step) {
+                return frame;
+            }
+        }
+        &self.control_points
+    }
+
+    pub fn prepare_shutdown(&mut self) {
+        self.stop_animation();
+    }
+
     pub fn add_control_point(&mut self, point: Point) {
         self.message = None;
         self.stop_animation();
@@ -242,6 +255,33 @@ mod tests {
         app.update();
 
         assert_eq!(app.current_step, 0);
+    }
+
+    #[test]
+    fn test_shutdown_while_animating_leaves_clean_state() {
+        let mut app = AppState::new();
+        app.control_points.push(Point { x: 0.0, y: 0.0 });
+        app.control_points.push(Point { x: 10.0, y: 0.0 });
+        app.control_points.push(Point { x: 10.0, y: 10.0 });
+        app.handle_enter();
+        app.current_step = 4;
+
+        app.prepare_shutdown();
+
+        assert!(!app.animating);
+        assert!(app.frames.is_empty());
+        assert_eq!(app.current_step, 0);
+        assert_eq!(app.control_points.len(), 3);
+    }
+
+    #[test]
+    fn test_active_points_falls_back_when_frame_missing() {
+        let mut app = AppState::new();
+        app.control_points.push(Point { x: 1.0, y: 2.0 });
+        app.animating = true;
+        app.current_step = 0;
+
+        assert_eq!(app.active_points(), &[Point { x: 1.0, y: 2.0 }]);
     }
 
     #[test]

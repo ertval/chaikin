@@ -43,11 +43,7 @@ fn draw_polyline(buffer: &mut [u32], points: &[Point], color: u32) {
 fn render(buffer: &mut [u32], state: &AppState) {
     buffer.fill(BG_COLOR);
 
-    let active_points = if state.animating && !state.frames.is_empty() {
-        &state.frames[state.current_step]
-    } else {
-        &state.control_points
-    };
+    let active_points = state.active_points();
 
     for point in active_points {
         draw_circle(
@@ -90,8 +86,10 @@ fn main() {
         state.update();
         render(&mut buffer, &state);
 
-        window
-            .update_with_buffer(&buffer, WIDTH, HEIGHT)
-            .expect("failed to update window");
+        if window.update_with_buffer(&buffer, WIDTH, HEIGHT).is_err() {
+            break;
+        }
     }
+
+    state.prepare_shutdown();
 }
