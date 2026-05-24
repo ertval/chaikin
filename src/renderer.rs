@@ -1,5 +1,16 @@
 use crate::chaikin::Point;
 
+pub const WIDTH: usize = 800;
+pub const HEIGHT: usize = 600;
+pub const POINT_RADIUS: i32 = 6;
+
+pub const BG_COLOR: u32 = 0xFF_1E_1E_2E;
+pub const POINT_COLOR: u32 = 0xFF_F9_E2_AF;
+pub const LINE_COLOR: u32 = 0xFF_CBA_6F7;
+
+pub const INITIAL_WINDOW_X: isize = 100;
+pub const INITIAL_WINDOW_Y: isize = 100;
+
 /// Helper function to draw a filled circle centered at (cx, cy) with radius r.
 pub fn draw_circle(buffer: &mut [u32], width: usize, height: usize, cx: f64, cy: f64, r: i32, color: u32) {
     let r2 = r * r;
@@ -18,14 +29,40 @@ pub fn draw_circle(buffer: &mut [u32], width: usize, height: usize, cx: f64, cy:
 
 /// Helper function to draw a line segment from p1 to p2 using Bresenham's line algorithm.
 pub fn draw_line(
-    _buffer: &mut [u32],
-    _width: usize,
-    _height: usize,
-    _p1: Point,
-    _p2: Point,
-    _color: u32,
+    buffer: &mut [u32],
+    width: usize,
+    height: usize,
+    p1: Point,
+    p2: Point,
+    color: u32,
 ) {
-    // Placeholder: Implement Bresenham's line drawing algorithm
+    let mut x0 = p1.x.round() as i32;
+    let mut y0 = p1.y.round() as i32;
+    let x1 = p2.x.round() as i32;
+    let y1 = p2.y.round() as i32;
+    let dx = (x1 - x0).abs();
+    let dy = -(y1 - y0).abs();
+    let sx = if x0 < x1 { 1 } else { -1 };
+    let sy = if y0 < y1 { 1 } else { -1 };
+    let mut err = dx + dy;
+
+    loop {
+        if x0 >= 0 && y0 >= 0 && (x0 as usize) < width && (y0 as usize) < height {
+            buffer[y0 as usize * width + x0 as usize] = color;
+        }
+        if x0 == x1 && y0 == y1 {
+            break;
+        }
+        let e2 = 2 * err;
+        if e2 >= dy {
+            err += dy;
+            x0 += sx;
+        }
+        if e2 <= dx {
+            err += dx;
+            y0 += sy;
+        }
+    }
 }
 
 /// Helper function to draw a text status message onto the frame buffer.
@@ -55,16 +92,27 @@ mod tests {
 
         draw_circle(&mut buffer, width, height, cx, cy, r, color);
 
-        // Center pixel (2, 2) => index 2 * 5 + 2 = 12
         assert_eq!(buffer[12], color);
-        // Pixels on direct edges (dx=0, dy=1), (dx=0, dy=-1), (dx=1, dy=0), (dx=-1, dy=0) should be colored
-        assert_eq!(buffer[7], color);  // (2, 1) => index 7
-        assert_eq!(buffer[17], color); // (2, 3) => index 17
-        assert_eq!(buffer[11], color); // (1, 2) => index 11
-        assert_eq!(buffer[13], color); // (3, 2) => index 13
-
-        // Diagonal pixel (1, 1) => index 6. dx=1, dy=1 => dx^2 + dy^2 = 2 > r^2 (1), so it should not be colored
+        assert_eq!(buffer[7], color);
+        assert_eq!(buffer[17], color);
+        assert_eq!(buffer[11], color);
+        assert_eq!(buffer[13], color);
         assert_eq!(buffer[6], 0);
+    }
+
+    #[test]
+    fn test_draw_line() {
+        let mut buffer = vec![0u32; 25];
+        draw_line(
+            &mut buffer,
+            5,
+            5,
+            Point { x: 0.0, y: 0.0 },
+            Point { x: 4.0, y: 0.0 },
+            0xFFFFFFFF,
+        );
+        assert_eq!(buffer[0], 0xFFFFFFFF);
+        assert_eq!(buffer[4], 0xFFFFFFFF);
     }
 
     #[test]
@@ -75,4 +123,3 @@ mod tests {
         assert!(true);
     }
 }
-

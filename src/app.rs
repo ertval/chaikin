@@ -1,5 +1,14 @@
 use crate::chaikin::Point;
 
+pub const TARGET_FPS: usize = 60;
+pub const STEP_FRAMES: u32 = 30;
+pub const DRAG_RADIUS: f64 = 12.0;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct StatusMessage {
+    pub text: &'static str,
+}
+
 pub struct AppState {
     pub control_points: Vec<Point>,
     pub frames: Vec<Vec<Point>>,
@@ -8,6 +17,7 @@ pub struct AppState {
     pub step_frame_counter: u32,
     pub left_was_down: bool,
     pub enter_was_down: bool,
+    pub message: Option<StatusMessage>,
     pub dragging_index: Option<usize>,
 }
 
@@ -21,6 +31,7 @@ impl AppState {
             step_frame_counter: 0,
             left_was_down: false,
             enter_was_down: false,
+            message: None,
             dragging_index: None,
         }
     }
@@ -44,6 +55,7 @@ mod tests {
         assert_eq!(app.step_frame_counter, 0);
         assert!(!app.left_was_down);
         assert!(!app.enter_was_down);
+        assert_eq!(app.message, None);
         assert_eq!(app.dragging_index, None);
     }
 
@@ -54,4 +66,3 @@ mod tests {
         assert!(app.control_points.is_empty());
     }
 }
-

@@ -14,35 +14,37 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 
 ## 2. App state and window loop
 
-- [ ] Build the interactive window around the existing `minifb` setup in `src/main.rs`.
-- [ ] Keep the window size fixed and explicit, with a dark background and enough room for a visible curve.
-- [ ] Add rendering constants: `WIDTH`, `HEIGHT`, `POINT_RADIUS`, `LINE_COLOR`, `POINT_COLOR`, `BG_COLOR`.
-- [ ] Add animation timing constants: `TARGET_FPS` (already 60) and `STEP_FRAMES` (e.g. 30 for 0.5s per step).
-- [ ] Introduce a dedicated `AppState` struct so the loop stays simple.
-- [ ] Store the current control points in `control_points: Vec<Point>`.
-- [ ] Store the animation frames in `frames: Vec<Vec<Point>>`, where each entry is one displayed step.
-- [ ] Track whether the app is animating with `animating: bool`.
-- [ ] Track the currently displayed step with `current_step: usize`.
-- [ ] Track a frame counter with `step_frame_counter: u32` so steps advance on a fixed cadence.
-- [ ] Track edge-triggered input with `left_was_down: bool` and `enter_was_down: bool`.
-- [ ] (Optional) Track `message: Option<StatusMessage>` for the no-points reminder.
-- [ ] (Bonus) Track dragging state with `dragging_index: Option<usize>` and a `drag_radius`.
-- [ ] Initialize state to a clean empty scene in a `new()` constructor.
-- [ ] Keep the main loop limited to: poll input -> update state -> render -> present buffer.
+- [x] Build the interactive window around the existing `minifb` setup in `src/main.rs`.
+- [x] Keep the window size fixed and explicit, with a dark background and enough room for a visible curve.
+- [x] Add rendering constants: `WIDTH`, `HEIGHT`, `POINT_RADIUS`, `LINE_COLOR`, `POINT_COLOR`, `BG_COLOR`.
+- [x] Add animation timing constants: `TARGET_FPS` (already 60) and `STEP_FRAMES` (e.g. 30 for 0.5s per step).
+- [x] Introduce a dedicated `AppState` struct so the loop stays simple.
+- [x] Store the current control points in `control_points: Vec<Point>`.
+- [x] Store the animation frames in `frames: Vec<Vec<Point>>`, where each entry is one displayed step.
+- [x] Track whether the app is animating with `animating: bool`.
+- [x] Track the currently displayed step with `current_step: usize`.
+- [x] Track a frame counter with `step_frame_counter: u32` so steps advance on a fixed cadence.
+- [x] Track edge-triggered input with `left_was_down: bool` and `enter_was_down: bool`.
+- [x] (Optional) Track `message: Option<StatusMessage>` for the no-points reminder.
+- [x] (Bonus) Track dragging state with `dragging_index: Option<usize>` and a `drag_radius`.
+- [x] Initialize state to a clean empty scene in a `new()` constructor.
+- [x] Keep the main loop limited to: poll input -> update state -> render -> present buffer.
+- [x] Open the window at a fixed initial position (`INITIAL_WINDOW_X`, `INITIAL_WINDOW_Y`) instead of a random placement.
+- [x] Use the native system title bar for move/close (X11 on WSL); custom in-window chrome removed.
 
 ## 3. Mouse input
 
-- [ ] Read the mouse position with `window.get_mouse_pos(MouseMode::Clamp)`.
-- [ ] Read the left button with `window.get_mouse_down(MouseButton::Left)`.
-- [ ] Only add a point on the rising edge: `left_down && !left_was_down`.
-- [ ] Convert the mouse position into `Point { x: x as f64, y: y as f64 }`.
+- [x] Read the mouse position with `window.get_mouse_pos(MouseMode::Clamp)`.
+- [x] Read the left button with `window.get_mouse_down(MouseButton::Left)`.
+- [x] Only add a point on the rising edge: `left_down && !left_was_down`.
+- [x] Convert the mouse position into `Point { x: x as f64, y: y as f64 }`.
 - [ ] Decide and implement a single rule: ignore clicks while animating (simplest, avoids surprises).
 - [ ] When adding a new point, stop any animation (`animating = false`, `frames.clear()`, `current_step = 0`).
-- [ ] Keep left-click behavior stable so the user can place many points without repeats from a held button.
+- [x] Keep left-click behavior stable so the user can place many points without repeats from a held button.
 
 ## 4. Enter key behavior
 
-- [ ] Track `enter_was_down` to detect the rising edge of Enter.
+- [x] Track `enter_was_down` to detect the rising edge of Enter.
 - [ ] On Enter press with 0 points, do nothing except optionally set a message timer.
 - [ ] On Enter press with 1 point, stop animation and render only that point.
 - [ ] On Enter press with 2 points, stop animation and render a straight line.
@@ -64,23 +66,24 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 
 ## 6. Rendering
 
-- [ ] Clear the buffer each frame with the background color.
-- [ ] Select `active_points`:
+- [x] Clear the buffer each frame with the background color.
+- [x] Select `active_points`:
 	- If `animating`, use `frames[current_step]`.
 	- If not animating, use `control_points`.
 - [ ] For `active_points.len() >= 2`, draw a polyline by connecting consecutive points.
 - [ ] For exactly 2 points, the polyline is just one straight line segment.
-- [ ] For exactly 1 point, skip line drawing and show only the point.
-- [ ] Draw a small circle for every control point (always visible, even during animation).
-- [ ] Add a `draw_line` helper (Bresenham or DDA) that writes pixels into the buffer.
-- [ ] Keep circle radius small and consistent with the reference video.
-- [ ] If the optional message is implemented, draw it last so it appears above the scene.
+- [x] For exactly 1 point, skip line drawing and show only the point.
+- [x] Draw a small circle for every control point (always visible, even during animation).
+- [x] Add a `draw_line` helper (Bresenham or DDA) that writes pixels into the buffer.
+- [x] Keep circle radius small and consistent with the reference video.
+- [x] If the optional message is implemented, draw it last so it appears above the scene.
 
 ## 7. Escape and exit behavior
 
-- [ ] Bind Escape to close the window immediately.
+- [x] Bind Escape to close the window immediately.
+- [x] Use the native window close button (system title bar).
 - [ ] Confirm the app exits cleanly while idle and while animating.
-- [ ] Keep shutdown path free of panics so the window can close without errors.
+- [x] Keep shutdown path free of panics so the window can close without errors.
 
 ## 8. Bonus features
 
@@ -94,12 +97,12 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 
 ## 9. Manual test checklist from the audit
 
-- [ ] `cargo run` compiles and runs without warnings that block the workflow.
-- [ ] Left click on the canvas adds control points.
-- [ ] Each control point is marked with a small circle.
+- [x] `cargo run` compiles and runs without warnings that block the workflow.
+- [x] Left click on the canvas adds control points.
+- [x] Each control point is marked with a small circle.
 - [ ] With 3 or more points, pressing Enter starts the Chaikin animation.
 - [ ] The animation completes 7 steps and then restarts.
-- [ ] Pressing Escape exits without errors.
+- [x] Pressing Escape exits without errors.
 - [ ] With 1 point, pressing Enter shows only the point and nothing changes.
 - [ ] With 2 points, pressing Enter shows only a straight line.
 - [ ] Pressing Enter with no points does nothing.
@@ -110,8 +113,8 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 
 ## 10. Implementation order
 
-- [ ] Create the `AppState` struct and move loop-local state into it.
-- [ ] Add edge-triggered input for left click and Enter.
+- [x] Create the `AppState` struct and move loop-local state into it.
+- [x] Add edge-triggered input for left click and Enter.
 - [ ] Add static rendering: clear background, draw points, draw line/polyline.
 - [ ] Add `build_frames` and animation timing with `STEP_FRAMES`.
 - [ ] Handle the 0/1/2-point Enter cases explicitly.
@@ -122,4 +125,4 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 
 ## Notes
 
-- Warning: "Failed to create server-side surface decoration: Missing" is harmless.
+- The app uses the X11 backend (`minifb` with `features = ["x11"]`) for native window decorations on WSL. Ensure `DISPLAY` is set (e.g. `:0`).

@@ -1,12 +1,54 @@
-use chaikin::Point;
+use chaikin::app::AppState;
+use chaikin::chaikin::Point;
+use chaikin::renderer::{
+    self, draw_circle, BG_COLOR, HEIGHT, INITIAL_WINDOW_X, INITIAL_WINDOW_Y, LINE_COLOR,
+    POINT_COLOR, POINT_RADIUS, WIDTH,
+};
 use minifb::{Key, MouseButton, MouseMode, Window, WindowOptions};
 
-const WIDTH: usize = 800;
-const HEIGHT: usize = 600;
-const POINT_RADIUS: i32 = 6;
+fn poll_input(window: &Window, state: &mut AppState) {
+    if let Some((x, y)) = window.get_mouse_pos(MouseMode::Clamp) {
+        let left_down = window.get_mouse_down(MouseButton::Left);
+        if left_down && !state.left_was_down {
+            state.control_points.push(Point {
+                x: x as f64,
+                y: y as f64,
+            });
+        }
+        state.left_was_down = left_down;
+    } else {
+        state.left_was_down = false;
+    }
 
-const COLOR_BG: u32 = 0xFF_1E_1E_2E;
-const COLOR_POINT: u32 = 0xFF_F9_E2_AF;
+    let enter_down = window.is_key_down(Key::Enter);
+    state.enter_was_down = enter_down;
+}
+
+fn render(buffer: &mut [u32], state: &AppState) {
+    buffer.fill(BG_COLOR);
+
+    let active_points = if state.animating && !state.frames.is_empty() {
+        &state.frames[state.current_step]
+    } else {
+        &state.control_points
+    };
+
+    for point in active_points {
+        draw_circle(
+            buffer,
+            WIDTH,
+            HEIGHT,
+            point.x,
+            point.y,
+            POINT_RADIUS,
+            POINT_COLOR,
+        );
+    }
+
+    if let Some(message) = &state.message {
+        renderer::draw_text_message(buffer, WIDTH, HEIGHT, message.text, LINE_COLOR);
+    }
+}
 
 fn main() {
     let mut window = Window::new(
@@ -17,48 +59,19 @@ fn main() {
     )
     .expect("failed to open window");
 
-    window.set_target_fps(60);
+    window.set_target_fps(chaikin::app::TARGET_FPS);
+    window.set_position(INITIAL_WINDOW_X, INITIAL_WINDOW_Y);
 
-    let mut buffer = vec![COLOR_BG; WIDTH * HEIGHT];
-    let mut control_points: Vec<Point> = Vec::new();
-    let mut left_was_down = false;
+    let mut buffer = vec![BG_COLOR; WIDTH * HEIGHT];
+    let mut state = AppState::new();
 
     while window.is_open() && !window.is_key_down(Key::Escape) {
-        if let Some((x, y)) = window.get_mouse_pos(MouseMode::Clamp) {
-            let left_down = window.get_mouse_down(MouseButton::Left);
-            if left_down && !left_was_down {
-                control_points.push(Point {
-                    x: x as f64,
-                    y: y as f64,
-                });
-            }
-            left_was_down = left_down;
-        } else {
-            left_was_down = false;
-        }
-
-        buffer.fill(COLOR_BG);
-        for point in &control_points {
-            draw_circle(&mut buffer, WIDTH, HEIGHT, point.x, point.y, POINT_RADIUS, COLOR_POINT);
-        }
+        poll_input(&window, &mut state);
+        state.update();
+        render(&mut buffer, &state);
 
         window
             .update_with_buffer(&buffer, WIDTH, HEIGHT)
             .expect("failed to update window");
-    }
-}
-
-fn draw_circle(buffer: &mut [u32], width: usize, height: usize, cx: f64, cy: f64, r: i32, color: u32) {
-    let r2 = r * r;
-    for dy in -r..=r {
-        for dx in -r..=r {
-            if dx * dx + dy * dy <= r2 {
-                let x = cx.round() as i32 + dx;
-                let y = cy.round() as i32 + dy;
-                if x >= 0 && y >= 0 && (x as usize) < width && (y as usize) < height {
-                    buffer[y as usize * width + x as usize] = color;
-                }
-            }
-        }
     }
 }
