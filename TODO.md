@@ -47,10 +47,11 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 - [x] Track `enter_was_down` to detect the rising edge of Enter.
 - [x] On Enter press with 0 points, do nothing except optionally set a message timer.
 - [x] On Enter press with 1 point, stop animation and render only that point.
-- [ ] On Enter press with 2 points, stop animation and render a straight line.
+- [x] On Enter press with 2 points, stop animation and render a straight line.
 - [x] On Enter press with 3+ points, build 7 frames and start animation at step 0.
 - [x] If already animating, Enter should rebuild frames from the current control points and restart.
 - [x] If the optional message is implemented, clear it when a point is added or when Enter is pressed with 1+ points.
+- [x] Bind Right Click of the mouse to trigger the same action as Key::Enter.
 
 ## 5. Animation model
 
@@ -61,7 +62,7 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 - [x] In the update step, if `animating` and `frames.len() > 0`, increment `step_frame_counter`.
 - [x] When `step_frame_counter >= STEP_FRAMES`, reset it to 0 and increment `current_step`.
 - [x] Wrap `current_step` with modulo: `(current_step + 1) % frames.len()`.
-- [ ] Rebuild frames whenever the animation restarts or control points are modified.
+- [x] Rebuild frames whenever the animation restarts or control points are modified.
 - [x] Guard against invalid animation states (do not animate when `control_points.len() < 3`).
 
 ## 6. Rendering
@@ -70,8 +71,8 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 - [x] Select `active_points`:
 	- If `animating`, use `frames[current_step]`.
 	- If not animating, use `control_points`.
-- [ ] For `active_points.len() >= 2`, draw a polyline by connecting consecutive points.
-- [ ] For exactly 2 points, the polyline is just one straight line segment.
+- [x] For `active_points.len() >= 2`, draw a polyline by connecting consecutive points.
+- [x] For exactly 2 points, the polyline is just one straight line segment.
 - [x] For exactly 1 point, skip line drawing and show only the point.
 - [x] Draw a small circle for every control point (always visible, even during animation).
 - [x] Add a `draw_line` helper (Bresenham or DDA) that writes pixels into the buffer.
@@ -87,13 +88,13 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 
 ## 8. Bonus features
 
-- [ ] Add a clear action, mapped to `C` or `R`, that resets points and stops animation.
-- [ ] Clear should reset: `control_points`, `frames`, `animating`, `current_step`, and any message state.
-- [ ] Add hit-testing for dragging: on left-down, find the nearest point within `drag_radius`.
-- [ ] Store the active dragged index while the left button is held.
-- [ ] While dragging, update the point to the current mouse position on every frame.
-- [ ] If animating during drag, rebuild frames and restart so the curve updates in real time.
-- [ ] On left-up, release `dragging_index`.
+- [x] Add a clear action, mapped to `C` or `R`, that resets points and stops animation.
+- [x] Clear should reset: `control_points`, `frames`, `animating`, `current_step`, and any message state.
+- [x] Add hit-testing for dragging: on left-down, find the nearest point within `drag_radius`.
+- [x] Store the active dragged index while the left button is held.
+- [x] While dragging, update the point to the current mouse position on every frame.
+- [x] If animating during drag, rebuild frames and restart so the curve updates in real time.
+- [x] On left-up, release `dragging_index`.
 
 ## 9. Manual test checklist from the audit
 
@@ -105,24 +106,25 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 - [x] Pressing Escape exits without errors.
 - [x] Closing the window while animating exits without errors.
 - [x] With 1 point, pressing Enter shows only the point and nothing changes.
-- [ ] With 2 points, pressing Enter shows only a straight line.
+- [x] With 2 points, pressing Enter shows only a straight line.
 - [x] Pressing Enter with no points does nothing.
 - [x] After pressing Enter with no points, the user can still add points normally.
-- [ ] Bonus: pressing Enter with no points shows a short reminder message (if implemented).
-- [ ] Bonus: clearing the screen works without relaunching the app.
-- [ ] Bonus: dragging points updates the curve in real time.
+- [x] Bonus: pressing Enter with no points shows a short reminder message (if implemented).
+- [x] Bonus: clearing the screen works without relaunching the app.
+- [x] Bonus: dragging points updates the curve in real time.
+- [x] Bonus: right click of the mouse acts as the Enter key.
 
 ## 10. Implementation order
 
 - [x] Create the `AppState` struct and move loop-local state into it.
 - [x] Add edge-triggered input for left click and Enter.
-- [ ] Add static rendering: clear background, draw points, draw line/polyline.
+- [x] Add static rendering: clear background, draw points, draw line/polyline.
 - [x] Add `build_frames` and animation timing with `STEP_FRAMES`.
 - [x] Handle the 0/1/2-point Enter cases explicitly.
 - [x] Verify Escape exit behavior.
-- [ ] Add optional no-points message if desired.
-- [ ] Add clear key bonus and then dragging bonus.
-- [ ] Finish with the manual audit checklist.
+- [x] Add optional no-points message if desired.
+- [x] Add clear key bonus and then dragging bonus.
+- [x] Finish with the manual audit checklist.
 
 ## Notes
 
