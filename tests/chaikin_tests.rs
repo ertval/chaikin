@@ -62,3 +62,18 @@ fn build_frames_produces_seven_steps() {
 fn build_frames_returns_empty_for_fewer_than_three_points() {
     assert!(build_frames(&[Point { x: 0.0, y: 0.0 }], ANIMATION_STEPS).is_empty());
 }
+
+#[test]
+fn build_frames_pins_first_and_last_points() {
+    let points = [
+        Point { x: 0.0, y: 0.0 },
+        Point { x: 4.0, y: 0.0 },
+        Point { x: 4.0, y: 4.0 },
+    ];
+    let frames = build_frames(&points, ANIMATION_STEPS);
+
+    for frame in &frames {
+        assert_eq!(frame[0], points[0]);
+        assert_eq!(frame[frame.len() - 1], points[2]);
+    }
+}

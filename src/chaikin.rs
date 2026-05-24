@@ -31,10 +31,14 @@ pub fn chaikin_step(points: &[Point]) -> Vec<Point> {
 pub const ANIMATION_STEPS: usize = 7;
 
 /// Build `steps` animation frames; frame 0 is the original points, each next applies `chaikin_step`.
+/// The first and last points from `points` stay fixed at their original positions in every frame.
 pub fn build_frames(points: &[Point], steps: usize) -> Vec<Vec<Point>> {
     if points.len() < 3 || steps == 0 {
         return Vec::new();
     }
+
+    let first = points[0];
+    let last = points[points.len() - 1];
 
     let mut frames = Vec::with_capacity(steps);
     let mut current = points.to_vec();
@@ -42,6 +46,11 @@ pub fn build_frames(points: &[Point], steps: usize) -> Vec<Vec<Point>> {
 
     for _ in 1..steps {
         current = chaikin_step(&current);
+        if !current.is_empty() {
+            let last_index = current.len() - 1;
+            current[0] = first;
+            current[last_index] = last;
+        }
         frames.push(current.clone());
     }
 
