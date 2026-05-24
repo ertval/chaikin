@@ -5,3 +5,7 @@ edition = "2021"
 
 [dependencies]
 minifb = { version = "0.28", default-features = false, features = ["x11"] }
+
+[lib]
+name = "chaikin"
+path = "src/lib.rs"

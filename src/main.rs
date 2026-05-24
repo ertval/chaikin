@@ -6,18 +6,43 @@ use chaikin::renderer::{
 };
 use minifb::{Key, MouseButton, MouseMode, Window, WindowOptions};
 
+fn euclidean_distance(p1: Point, p2: Point) -> f64 {
+    let dx = p1.x - p2.x;
+    let dy = p1.y - p2.y;
+    (dx * dx + dy * dy).sqrt()
+}
+
+fn is_close(p1: Point, p2: Point, threshold: f64) -> bool {
+    euclidean_distance(p1, p2) < threshold
+}
+
 fn poll_input(window: &Window, state: &mut AppState) {
+    use chaikin::app::DRAG_RADIUS;
     if let Some((x, y)) = window.get_mouse_pos(MouseMode::Clamp) {
         let left_down = window.get_mouse_down(MouseButton::Left);
+        let mouse = Point { x: x as f64, y: y as f64 };
+
         if left_down && !state.left_was_down && !state.animating {
-            state.add_control_point(Point {
-                x: x as f64,
-                y: y as f64,
-            });
+            let is_near = state.control_points.iter().position(|p| is_close(*p, mouse, DRAG_RADIUS));
+            if let Some(idx) = is_near {
+                state.dragging_index = Some(idx);
+            } else {
+                state.add_control_point(mouse);
+            }
         }
+
+        if left_down {
+            if let Some(idx) = state.dragging_index {
+                state.update_dragged_point(idx, x as f64, y as f64);
+            }
+        } else {
+            state.dragging_index = None;
+        }
+
         state.left_was_down = left_down;
     } else {
         state.left_was_down = false;
+        state.dragging_index = None;
     }
 
     let enter_down = window.is_key_down(Key::Enter);

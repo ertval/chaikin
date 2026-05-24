@@ -109,6 +109,18 @@ impl AppState {
             }
         }
     }
+    pub fn update_dragged_point(&mut self, index: usize, x: f64, y: f64) {
+        if let Some(point) = self.control_points.get_mut(index) {
+            point.x = x;
+            point.y = y;
+        }
+        if self.animating && self.control_points.len() >= 3 {
+            self.frames = build_frames(&self.control_points, ANIMATION_STEPS);
+            self.current_step = 0;
+            self.step_frame_counter = 0;
+        }
+    }
+
     pub fn handle_clear(&mut self) {
         self.control_points.clear();
         self.frames.clear();
