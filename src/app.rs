@@ -1,8 +1,10 @@
-use crate::chaikin::Point;
+use crate::chaikin::{build_frames, Point, ANIMATION_STEPS};
 
 pub const TARGET_FPS: usize = 60;
 pub const STEP_FRAMES: u32 = 30;
 pub const DRAG_RADIUS: f64 = 12.0;
+
+pub const NO_POINTS_MESSAGE: &str = "Add control points first";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StatusMessage {
@@ -37,7 +39,15 @@ impl AppState {
     }
 
     pub fn update(&mut self) {
-        // Placeholder for event updates and animation logic
+        if !self.animating || self.frames.is_empty() {
+            return;
+        }
+
+        self.step_frame_counter += 1;
+        if self.step_frame_counter >= STEP_FRAMES {
+            self.step_frame_counter = 0;
+            self.current_step = (self.current_step + 1) % self.frames.len();
+        }
     }
 
     pub fn stop_animation(&mut self) {
@@ -48,8 +58,30 @@ impl AppState {
     }
 
     pub fn add_control_point(&mut self, point: Point) {
+        self.message = None;
         self.stop_animation();
         self.control_points.push(point);
+    }
+
+    pub fn handle_enter(&mut self) {
+        match self.control_points.len() {
+            0 => {
+                self.message = Some(StatusMessage {
+                    text: NO_POINTS_MESSAGE,
+                });
+            }
+            1 | 2 => {
+                self.message = None;
+                self.stop_animation();
+            }
+            _ => {
+                self.message = None;
+                self.frames = build_frames(&self.control_points, ANIMATION_STEPS);
+                self.animating = !self.frames.is_empty();
+                self.current_step = 0;
+                self.step_frame_counter = 0;
+            }
+        }
     }
 }
 
@@ -104,9 +136,119 @@ mod tests {
     }
 
     #[test]
+    fn test_handle_enter_zero_points_sets_message() {
+        let mut app = AppState::new();
+        app.handle_enter();
+        assert_eq!(
+            app.message,
+            Some(StatusMessage {
+                text: NO_POINTS_MESSAGE,
+            })
+        );
+        assert!(!app.animating);
+    }
+
+    #[test]
+    fn test_handle_enter_one_point_stops_animation() {
+        let mut app = AppState::new();
+        app.control_points.push(Point { x: 1.0, y: 2.0 });
+        app.animating = true;
+        app.frames.push(vec![]);
+
+        app.handle_enter();
+
+        assert!(!app.animating);
+        assert!(app.frames.is_empty());
+        assert_eq!(app.message, None);
+    }
+
+    #[test]
+    fn test_handle_enter_two_points_stops_animation() {
+        let mut app = AppState::new();
+        app.control_points.push(Point { x: 0.0, y: 0.0 });
+        app.control_points.push(Point { x: 10.0, y: 10.0 });
+        app.animating = true;
+
+        app.handle_enter();
+
+        assert!(!app.animating);
+        assert_eq!(app.message, None);
+    }
+
+    #[test]
+    fn test_handle_enter_three_points_starts_animation() {
+        let mut app = AppState::new();
+        app.control_points.push(Point { x: 0.0, y: 0.0 });
+        app.control_points.push(Point { x: 10.0, y: 0.0 });
+        app.control_points.push(Point { x: 10.0, y: 10.0 });
+
+        app.handle_enter();
+
+        assert!(app.animating);
+        assert_eq!(app.frames.len(), ANIMATION_STEPS);
+        assert_eq!(app.current_step, 0);
+        assert_eq!(app.message, None);
+    }
+
+    #[test]
+    fn test_handle_enter_while_animating_rebuilds_frames() {
+        let mut app = AppState::new();
+        app.control_points.push(Point { x: 0.0, y: 0.0 });
+        app.control_points.push(Point { x: 10.0, y: 0.0 });
+        app.control_points.push(Point { x: 10.0, y: 10.0 });
+        app.handle_enter();
+        app.current_step = 5;
+
+        app.handle_enter();
+
+        assert!(app.animating);
+        assert_eq!(app.frames.len(), ANIMATION_STEPS);
+        assert_eq!(app.current_step, 0);
+    }
+
+    #[test]
+    fn test_add_control_point_clears_message() {
+        let mut app = AppState::new();
+        app.message = Some(StatusMessage {
+            text: NO_POINTS_MESSAGE,
+        });
+
+        app.add_control_point(Point { x: 1.0, y: 1.0 });
+
+        assert_eq!(app.message, None);
+    }
+
+    #[test]
+    fn test_update_advances_animation_step() {
+        let mut app = AppState::new();
+        app.animating = true;
+        app.frames = vec![vec![], vec![]];
+        app.step_frame_counter = STEP_FRAMES - 1;
+
+        app.update();
+
+        assert_eq!(app.step_frame_counter, 0);
+        assert_eq!(app.current_step, 1);
+    }
+
+    #[test]
+    fn test_update_wraps_animation_step() {
+        let mut app = AppState::new();
+        app.animating = true;
+        app.frames = vec![vec![], vec![]];
+        app.current_step = 1;
+        app.step_frame_counter = STEP_FRAMES - 1;
+
+        app.update();
+
+        assert_eq!(app.current_step, 0);
+    }
+
+    #[test]
     fn test_app_state_update_placeholder() {
         let mut app = AppState::new();
         app.update();
         assert!(app.control_points.is_empty());
+        assert_eq!(app.step_frame_counter, 0);
     }
 }

@@ -45,12 +45,12 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 ## 4. Enter key behavior
 
 - [x] Track `enter_was_down` to detect the rising edge of Enter.
-- [ ] On Enter press with 0 points, do nothing except optionally set a message timer.
-- [ ] On Enter press with 1 point, stop animation and render only that point.
-- [ ] On Enter press with 2 points, stop animation and render a straight line.
-- [ ] On Enter press with 3+ points, build 7 frames and start animation at step 0.
-- [ ] If already animating, Enter should rebuild frames from the current control points and restart.
-- [ ] If the optional message is implemented, clear it when a point is added or when Enter is pressed with 1+ points.
+- [x] On Enter press with 0 points, do nothing except optionally set a message timer.
+- [x] On Enter press with 1 point, stop animation and render only that point.
+- [x] On Enter press with 2 points, stop animation and render a straight line.
+- [x] On Enter press with 3+ points, build 7 frames and start animation at step 0.
+- [x] If already animating, Enter should rebuild frames from the current control points and restart.
+- [x] If the optional message is implemented, clear it when a point is added or when Enter is pressed with 1+ points.
 
 ## 5. Animation model
 

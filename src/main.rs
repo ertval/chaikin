@@ -1,7 +1,7 @@
 use chaikin::app::AppState;
 use chaikin::chaikin::Point;
 use chaikin::renderer::{
-    self, draw_circle, BG_COLOR, HEIGHT, INITIAL_WINDOW_X, INITIAL_WINDOW_Y, LINE_COLOR,
+    self, draw_circle, draw_line, BG_COLOR, HEIGHT, INITIAL_WINDOW_X, INITIAL_WINDOW_Y, LINE_COLOR,
     POINT_COLOR, POINT_RADIUS, WIDTH,
 };
 use minifb::{Key, MouseButton, MouseMode, Window, WindowOptions};
@@ -21,7 +21,23 @@ fn poll_input(window: &Window, state: &mut AppState) {
     }
 
     let enter_down = window.is_key_down(Key::Enter);
+    if enter_down && !state.enter_was_down {
+        state.handle_enter();
+    }
     state.enter_was_down = enter_down;
+}
+
+fn draw_polyline(buffer: &mut [u32], points: &[Point], color: u32) {
+    for segment in points.windows(2) {
+        draw_line(
+            buffer,
+            WIDTH,
+            HEIGHT,
+            segment[0],
+            segment[1],
+            color,
+        );
+    }
 }
 
 fn render(buffer: &mut [u32], state: &AppState) {
@@ -43,6 +59,10 @@ fn render(buffer: &mut [u32], state: &AppState) {
             POINT_RADIUS,
             POINT_COLOR,
         );
+    }
+
+    if state.animating && active_points.len() >= 2 {
+        draw_polyline(buffer, active_points, LINE_COLOR);
     }
 
     if let Some(message) = &state.message {

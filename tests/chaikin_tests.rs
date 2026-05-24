@@ -1,4 +1,4 @@
-use chaikin::{Point, chaikin_step};
+use chaikin::{build_frames, Point, chaikin_step, ANIMATION_STEPS};
 
 #[test]
 fn one_segment_coordinates() {
@@ -43,4 +43,22 @@ fn edge_case_two_points() {
         Point { x: 10.0, y: 10.0 },
     ];
     assert_eq!(chaikin_step(&input), input);
+}
+
+#[test]
+fn build_frames_produces_seven_steps() {
+    let points = [
+        Point { x: 0.0, y: 0.0 },
+        Point { x: 4.0, y: 0.0 },
+        Point { x: 4.0, y: 4.0 },
+    ];
+    let frames = build_frames(&points, ANIMATION_STEPS);
+    assert_eq!(frames.len(), ANIMATION_STEPS);
+    assert_eq!(frames[0], points);
+    assert_ne!(frames[0], frames[1]);
+}
+
+#[test]
+fn build_frames_returns_empty_for_fewer_than_three_points() {
+    assert!(build_frames(&[Point { x: 0.0, y: 0.0 }], ANIMATION_STEPS).is_empty());
 }

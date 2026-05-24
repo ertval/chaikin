@@ -27,3 +27,23 @@ pub fn chaikin_step(points: &[Point]) -> Vec<Point> {
         }
     }
 }
+
+pub const ANIMATION_STEPS: usize = 7;
+
+/// Build `steps` animation frames; frame 0 is the original points, each next applies `chaikin_step`.
+pub fn build_frames(points: &[Point], steps: usize) -> Vec<Vec<Point>> {
+    if points.len() < 3 || steps == 0 {
+        return Vec::new();
+    }
+
+    let mut frames = Vec::with_capacity(steps);
+    let mut current = points.to_vec();
+    frames.push(current.clone());
+
+    for _ in 1..steps {
+        current = chaikin_step(&current);
+        frames.push(current.clone());
+    }
+
+    frames
+}
