@@ -65,15 +65,59 @@ pub fn draw_line(
     }
 }
 
-/// Helper function to draw a text status message onto the frame buffer.
+const CHAR_W: usize = 5;
+
+// Each char is encoded as 7 rows of 5 pixels.
+// In each byte, bit 4 is the leftmost pixel and bit 0 is the rightmost.
+const FONT: &[(char, [u8; 7])] = &[
+    (' ', [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]),
+    ('A', [0x0E, 0x11, 0x11, 0x1F, 0x11, 0x11, 0x11]),
+    ('c', [0x00, 0x00, 0x0E, 0x10, 0x10, 0x10, 0x0E]),
+    ('d', [0x01, 0x01, 0x0F, 0x11, 0x11, 0x11, 0x0F]),
+    ('f', [0x06, 0x08, 0x08, 0x1C, 0x08, 0x08, 0x08]),
+    ('i', [0x04, 0x00, 0x04, 0x04, 0x04, 0x04, 0x0E]),
+    ('l', [0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x0E]),
+    ('n', [0x00, 0x00, 0x1C, 0x12, 0x12, 0x12, 0x12]),
+    ('o', [0x00, 0x00, 0x0E, 0x11, 0x11, 0x11, 0x0E]),
+    ('p', [0x00, 0x1E, 0x11, 0x11, 0x1E, 0x10, 0x10]),
+    ('r', [0x00, 0x00, 0x1E, 0x11, 0x10, 0x10, 0x10]),
+    ('s', [0x00, 0x00, 0x0E, 0x10, 0x0E, 0x01, 0x0E]),
+    ('t', [0x04, 0x04, 0x1F, 0x04, 0x04, 0x04, 0x03]),
+];
+
+fn lookup_char(c: char) -> [u8; 7] {
+    FONT.iter()
+        .find(|(ch, _)| *ch == c)
+        .map(|(_, bitmap)| *bitmap)
+        .unwrap_or([0u8; 7])
+}
+
+/// Draw a text message into the pixel buffer using the embedded bitmap font.
 pub fn draw_text_message(
-    _buffer: &mut [u32],
-    _width: usize,
-    _height: usize,
-    _message: &str,
-    _color: u32,
+    buffer: &mut [u32],
+    width: usize,
+    height: usize,
+    message: &str,
+    color: u32,
 ) {
-    // Placeholder: Render standard message alerts to buffer
+    let start_x: usize = 10;
+    let start_y: usize = 10;
+
+    for (i, ch) in message.chars().enumerate() {
+        let bitmap = lookup_char(ch);
+        let char_x = start_x + i * (CHAR_W + 1);
+        for (row, &byte) in bitmap.iter().enumerate() {
+            for col in 0..CHAR_W {
+                if byte & (1 << (CHAR_W - 1 - col)) != 0 {
+                    let px = char_x + col;
+                    let py = start_y + row;
+                    if px < width && py < height {
+                        buffer[py * width + px] = color;
+                    }
+                }
+            }
+        }
+    }
 }
 
 #[cfg(test)]
