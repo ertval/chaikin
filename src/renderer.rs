@@ -38,3 +38,41 @@ pub fn draw_text_message(
 ) {
     // Placeholder: Render standard message alerts to buffer
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_draw_circle() {
+        let mut buffer = vec![0u32; 25];
+        let width = 5;
+        let height = 5;
+        let cx = 2.0;
+        let cy = 2.0;
+        let r = 1;
+        let color = 0xFFFFFFFF;
+
+        draw_circle(&mut buffer, width, height, cx, cy, r, color);
+
+        // Center pixel (2, 2) => index 2 * 5 + 2 = 12
+        assert_eq!(buffer[12], color);
+        // Pixels on direct edges (dx=0, dy=1), (dx=0, dy=-1), (dx=1, dy=0), (dx=-1, dy=0) should be colored
+        assert_eq!(buffer[7], color);  // (2, 1) => index 7
+        assert_eq!(buffer[17], color); // (2, 3) => index 17
+        assert_eq!(buffer[11], color); // (1, 2) => index 11
+        assert_eq!(buffer[13], color); // (3, 2) => index 13
+
+        // Diagonal pixel (1, 1) => index 6. dx=1, dy=1 => dx^2 + dy^2 = 2 > r^2 (1), so it should not be colored
+        assert_eq!(buffer[6], 0);
+    }
+
+    #[test]
+    fn test_placeholders_dont_panic() {
+        let mut buffer = vec![0u32; 25];
+        draw_line(&mut buffer, 5, 5, Point { x: 0.0, y: 0.0 }, Point { x: 4.0, y: 4.0 }, 0xFFFFFFFF);
+        draw_text_message(&mut buffer, 5, 5, "Hello", 0xFFFFFFFF);
+        assert!(true);
+    }
+}
+
