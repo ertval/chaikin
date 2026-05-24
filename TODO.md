@@ -47,22 +47,22 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 - [x] Track `enter_was_down` to detect the rising edge of Enter.
 - [x] On Enter press with 0 points, do nothing except optionally set a message timer.
 - [x] On Enter press with 1 point, stop animation and render only that point.
-- [x] On Enter press with 2 points, stop animation and render a straight line.
+- [ ] On Enter press with 2 points, stop animation and render a straight line.
 - [x] On Enter press with 3+ points, build 7 frames and start animation at step 0.
 - [x] If already animating, Enter should rebuild frames from the current control points and restart.
 - [x] If the optional message is implemented, clear it when a point is added or when Enter is pressed with 1+ points.
 
 ## 5. Animation model
 
-- [ ] Implement `build_frames(points: &[Point], steps: usize) -> Vec<Vec<Point>>`.
-- [ ] Frame 0 is the original control points.
-- [ ] Frames 1..steps-1 apply `chaikin_step` repeatedly to the prior frame.
-- [ ] Use `steps = 7` so there are 7 displayed frames total (matches the requirement count).
-- [ ] In the update step, if `animating` and `frames.len() > 0`, increment `step_frame_counter`.
-- [ ] When `step_frame_counter >= STEP_FRAMES`, reset it to 0 and increment `current_step`.
-- [ ] Wrap `current_step` with modulo: `(current_step + 1) % frames.len()`.
+- [x] Implement `build_frames(points: &[Point], steps: usize) -> Vec<Vec<Point>>`.
+- [x] Frame 0 is the original control points.
+- [x] Frames 1..steps-1 apply `chaikin_step` repeatedly to the prior frame.
+- [x] Use `steps = 7` so there are 7 displayed frames total (matches the requirement count).
+- [x] In the update step, if `animating` and `frames.len() > 0`, increment `step_frame_counter`.
+- [x] When `step_frame_counter >= STEP_FRAMES`, reset it to 0 and increment `current_step`.
+- [x] Wrap `current_step` with modulo: `(current_step + 1) % frames.len()`.
 - [ ] Rebuild frames whenever the animation restarts or control points are modified.
-- [ ] Guard against invalid animation states (do not animate when `control_points.len() < 3`).
+- [x] Guard against invalid animation states (do not animate when `control_points.len() < 3`).
 
 ## 6. Rendering
 
@@ -100,14 +100,14 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 - [x] `cargo run` compiles and runs without warnings that block the workflow.
 - [x] Left click on the canvas adds control points.
 - [x] Each control point is marked with a small circle.
-- [ ] With 3 or more points, pressing Enter starts the Chaikin animation.
-- [ ] The animation completes 7 steps and then restarts.
+- [x] With 3 or more points, pressing Enter starts the Chaikin animation.
+- [x] The animation completes 7 steps and then restarts.
 - [x] Pressing Escape exits without errors.
 - [x] Closing the window while animating exits without errors.
-- [ ] With 1 point, pressing Enter shows only the point and nothing changes.
+- [x] With 1 point, pressing Enter shows only the point and nothing changes.
 - [ ] With 2 points, pressing Enter shows only a straight line.
-- [ ] Pressing Enter with no points does nothing.
-- [ ] After pressing Enter with no points, the user can still add points normally.
+- [x] Pressing Enter with no points does nothing.
+- [x] After pressing Enter with no points, the user can still add points normally.
 - [ ] Bonus: pressing Enter with no points shows a short reminder message (if implemented).
 - [ ] Bonus: clearing the screen works without relaunching the app.
 - [ ] Bonus: dragging points updates the curve in real time.
@@ -117,8 +117,8 @@ This file tracks the implementation work needed to satisfy [requirements.md](doc
 - [x] Create the `AppState` struct and move loop-local state into it.
 - [x] Add edge-triggered input for left click and Enter.
 - [ ] Add static rendering: clear background, draw points, draw line/polyline.
-- [ ] Add `build_frames` and animation timing with `STEP_FRAMES`.
-- [ ] Handle the 0/1/2-point Enter cases explicitly.
+- [x] Add `build_frames` and animation timing with `STEP_FRAMES`.
+- [x] Handle the 0/1/2-point Enter cases explicitly.
 - [x] Verify Escape exit behavior.
 - [ ] Add optional no-points message if desired.
 - [ ] Add clear key bonus and then dragging bonus.
