@@ -1,6 +1,9 @@
 # Chaikin's Algorithm Animation Application (Rust)
 
-A high-performance, software-rendered interactive desktop application visualizing **Chaikin's corner-cutting curve subdivision algorithm**, implemented in idiomatic Rust.
+[![Rust](https://img.shields.io/badge/Rust-000000?style=flat-square&logo=rust&logoColor=white)](https://www.rust-lang.org)
+[![CI](https://img.shields.io/github/actions/workflow/status/ertval/chaikin/rust.yml?style=flat-square&logo=github&logoColor=white)](https://github.com/ertval/chaikin/actions)
+
+Chaikin's corner-cutting algorithm generates smooth curves from sparse control points — fundamental to CAD, animation, and geometric modeling. This interactive Rust application lets you explore the subdivision process visually in real time.
 
 ---
 
@@ -15,27 +18,32 @@ A high-performance, software-rendered interactive desktop application visualizin
 
 ---
 
+## Architecture Flow
+
+```
+Mouse Input → AppState (points/drag/animation) → Chaikin Algorithm → Software Renderer (Bresenham) → Pixel Buffer → Window Display
+```
+
+---
+
 ## Directory Structure
 
-```text
-chaikin/
-├── Cargo.toml            # Project manifest & external dependencies
-├── README.md             # Project overview and quickstart guide
-├── TODO.md               # Requirements checklist and audit log
-├── docs/                 # Detailed documentation & specifications
-│   ├── audit.md          # Functional audit test checklist
-│   ├── guide.md          # Comprehensive logic, flow, Rust features, and Q&A
-│   └── requirements.md   # Core requirements and specifications
-├── src/                  # Application source code
-│   ├── lib.rs            # Library entrypoint exposing modules
-│   ├── main.rs           # OS event loop, input polling, and main renderer
-│   ├── app.rs            # AppState, animation ticks, and drag-and-drop state machine
-│   ├── chaikin.rs        # Mathematical implementation of corner-cutting algorithm
-│   └── renderer.rs       # Bresenham lines, circle filling, and text rendering primitives
-└── tests/                # Automated testing suites
-    ├── chaikin_tests.rs  # Core algorithmic math and point length edge case tests
-    └── integration-tests.rs # Full state transition and functional audit verification tests
-```
+- **`Cargo.toml`**: Project manifest & external dependencies
+- **`README.md`**: Project overview and quickstart guide
+- **`TODO.md`**: Requirements checklist and audit log
+- **`docs/`**: Detailed documentation & specifications
+  - **`audit.md`**: Functional audit test checklist
+  - **`guide.md`**: Comprehensive logic, flow, Rust features, and Q&A
+  - **`requirements.md`**: Core requirements and specifications
+- **`src/`**: Application source code
+  - **`lib.rs`**: Library entrypoint exposing modules
+  - **`main.rs`**: OS event loop, input polling, and main renderer
+  - **`app.rs`**: AppState, animation ticks, and drag-and-drop state machine
+  - **`chaikin.rs`**: Mathematical implementation of corner-cutting algorithm
+  - **`renderer.rs`**: Bresenham lines, circle filling, and text rendering primitives
+- **`tests/`**: Automated testing suites
+  - **`chaikin_tests.rs`**: Core algorithmic math and point length edge case tests
+  - **`integration-tests.rs`**: Full state transition and functional audit verification tests
 
 ---
 
@@ -63,13 +71,11 @@ cargo test
 
 ## Interactive Controls
 
-| Input | Action |
-| :--- | :--- |
-| **Left Click** | Place a new control point on the canvas (when not animating). |
-| **Left Click + Drag** | Drag an existing control point in real time. |
-| **Enter** / **Right Click** | Start / Restart the 7-step subdivision animation. |
-| **C / R** | Clear the screen, reset the state, and start over. |
-| **Escape** | Exit the application. |
+- **Left Click**: Place a new control point on the canvas (when not animating).
+- **Left Click + Drag**: Drag an existing control point in real time.
+- **Enter / Right Click**: Start / Restart the 7-step subdivision animation.
+- **C / R**: Clear the screen, reset the state, and start over.
+- **Escape**: Exit the application.
 
 ---
 
@@ -83,3 +89,9 @@ This guide includes:
 - Rust concept explanation (trait derivations, pattern matching, memory safety, slices, lifetimes).
 - Full answers to the audit checklist in `docs/audit.md`.
 - Advanced Q&A testing understanding of Rust memory safety and performance design.
+
+---
+
+## Related
+- [CV & Portfolio](https://ertval.github.io)
+- [lem-in-e](https://github.com/ertval/lem-in-e) — Go algorithmic routing solver
