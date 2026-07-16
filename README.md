@@ -1,9 +1,14 @@
-# Chaikin's Algorithm Animation Application (Rust)
+# Chaikin's Corner-Cutting Subdivision (Rust)
 
-[![Rust](https://img.shields.io/badge/Rust-000000?style=flat-square&logo=rust&logoColor=white)](https://www.rust-lang.org)
+[![Rust](https://img.shields.io/badge/Rust-1.80+-000000?style=flat-square&logo=rust&logoColor=white)](https://www.rust-lang.org)
 [![CI](https://img.shields.io/github/actions/workflow/status/ertval/chaikin/rust.yml?style=flat-square&logo=github&logoColor=white)](https://github.com/ertval/chaikin/actions)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-Chaikin's corner-cutting algorithm generates smooth curves from sparse control points — fundamental to CAD, animation, and geometric modeling. This interactive Rust application lets you explore the subdivision process visually in real time.
+---
+
+**Problem:** Generating smooth curves from sparse control points is complex without using heavy math frameworks or relying on high-level GPU-bound graphics stacks.
+
+**Solution:** An interactive Rust application implementing Chaikin's subdivision algorithm in a custom software renderer (Bresenham's and midpoint circle lines) drawing directly onto a 1D pixel buffer.
 
 ---
 
